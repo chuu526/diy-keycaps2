@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鍵帽DIY排版</title>
+  <style>
+    body { 
+      font-family: sans-serif; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      padding: 15px; 
+      background: #FFFAF0; 
+      margin: 0; 
+      box-sizing: border-box;
+      touch-action: manipulation; 
+    }
+
+    .main-container {
+      width: 100%;
+      max-width: 1050px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .header-area {
+      width: 100%;
+      max-width: 1000px;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      min-height: 50px;
+    }
+
+    .header-left-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .top-left-logo {
+      width: 80px;
+      height: auto;
+    }
+
+    .top-right-history {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .btn-history-icon {
+      width: 38px;
+      height: 38px;
+      background: #F9E9CD;
+      border: 1px solid #D4C3B3;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 18px;
+      color: #5c4033;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      padding: 0;
+    }
+    .btn-history-icon:hover { background: #f2dec0; }
+
+    .btn-trash-icon {
+      background: #ff6347 !important;
+      border: 1px solid #e05338 !important;
+      border-radius: 50% !important;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 0;
+    }
+    .btn-trash-icon:hover { background: #f45133 !important; }
+    .btn-trash-icon:disabled {
+      background: #e0e0e0 !important;
+      border-color: #cccccc !important;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    .btn-trash-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #ffffff;
+    }
+
+    h2 { margin: 0; font-size: 22px; color: #4a3b32; }
+
+    .canvas-wrapper { 
+      width: 1000px; 
+      height: 500px; 
+      display: flex; 
+      justify-content: center; 
+      margin-bottom: 15px;
+      overflow: hidden; 
+      position: relative;
+      background: #FFFFFF; 
+      border: 2px solid #D4C3B3; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+      border-radius: 8px; 
+    }
+
+    canvas { 
+      display: block;
+      cursor: pointer; 
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .controls { 
+      display: flex; 
+      gap: 10px; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+      width: 100%; 
+      max-width: 1000px; 
+      margin-bottom: 12px;
+    }
+
+    .btn { 
+      padding: 12px 18px; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      font-size: 14px; 
+      font-weight: bold; 
+      flex: 1; 
+      min-width: 130px; 
+      text-align: center; 
+      border: 1px solid #D4C3B3;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+    }
+    
+    .btn-form { 
+      background: #deb887; 
+      color: #ffffff; 
+      border-color: #cca677; 
+    } 
+    .btn-form:hover { background: #cea877; }
+
+    .btn-checkout { background: #9E7B66; color: #ffffff; border-color: #8b6a55; } 
+
+    .color-picker-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #FFF8D7;
+      border: 1px solid #ffe58f;
+      padding: 10px 16px;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 1000px;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #d48800;
+      font-weight: bold;
+    }
+
+    .color-picker-bar input[type="color"] {
+      border: 1px solid #ffe58f;
+      width: 35px;
+      height: 35px;
+      border-radius: 4px;
+      cursor: pointer;
+      background: none;
+      flex-shrink: 0;
+    }
+
+    .color-presets { 
+      display: flex; 
+      gap: 6px; 
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .preset-btn {
+      padding: 5px 10px;
+      font-size: 12px;
+      border: 1px solid #ffe58f;
+      border-radius: 4px;
+      cursor: pointer;
+      background: #fff;
+      color: #d48800;
+      white-space: nowrap;
+    }
+    .preset-btn:hover { background: #fff1b8; }
+
+    .tip-box { 
+      background: #fffbe6; 
+      border: 1px solid #ffe58f; 
+      padding: 10px 16px; 
+      border-radius: 6px; 
+      font-size: 13px; 
+      color: #d48800; 
+      width: 100%; 
+      max-width: 1000px; 
+      box-sizing: border-box; 
+    }
+    .tip-box ul { margin: 5px 0 0 18px; padding: 0; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #ffffff;
+      padding: 22px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 440px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      max-height: 90vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+    .modal-content h3 { margin-top: 0; color: #4a3b32; font-size: 20px; }
+    .modal-content p { font-size: 13px; color: #555; line-height: 1.4; margin-bottom: 12px; }
+    
+    .export-mode-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .export-tab-btn {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #D4C3B3;
+      background: #f9f4ec;
+      color: #5c4033;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .export-tab-btn.active {
+      background: #9E7B66;
+      color: white;
+      border-color: #8b6a55;
+    }
+
+    .preview-img-container {
+      width: 100%;
+      height: 220px;
+      border: 1px solid #D4C3B3;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .preview-img-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .modal-btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+    .btn-modal-upload { 
+      background: #9E7B66; 
+      color: white; 
+      padding: 12px 15px; 
+      border: none; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      font-weight: bold; 
+      flex: 1; 
+      font-size: 14px;
+    }
+    .btn-modal-upload:hover { background: #8b6a55; }
+
+    .btn-modal-close { 
+      background: #dfcca6; 
+      color: #5c4033; 
+      padding: 12px 15px; 
+      border: none; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      font-weight: bold; 
+      flex: 1; 
+      font-size: 14px;
+    }
+    .btn-modal-close:hover { background: #d2bc94; }
+
+    @media (max-width: 1050px) {
+      .canvas-wrapper { width: 100%; height: auto; aspect-ratio: 1600 / 840; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-container">
+    <div class="header-area">
+      <div class="header-left-group">
+        <img src="The創 LOGO.png" alt="The創 LOGO" class="top-left-logo" onerror="this.style.display='none'">
+        <h2>鍵帽DIY</h2>
+      </div>
+      <div class="top-right-history">
+        <button class="btn-history-icon" onclick="undoAction()" title="返回上一步">↶</button>
+        <button class="btn-history-icon" onclick="redoAction()" title="重做下一步">↷</button>
+        <button class="btn-trash-icon" id="trashBtn" onclick="clearSelectedZone()" title="清除選中照片" disabled>
+          <svg viewBox="0 0 24 24">
+            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="diyCanvas"></canvas>
+    </div>
+
+    <div class="color-picker-bar">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span id="colorBarLabel">🎨 請點選上方任一區域以設定底色：</span>
+      </div>
+      <div class="color-presets">
+        <input type="color" id="zoneBgColorPicker" value="#FFFFFF" onchange="changeSelectedZoneBgColor(this.value)">
+        <button class="preset-btn" onclick="setPresetColor('#FFFFFF')">純白</button>
+        <button class="preset-btn" onclick="setPresetColor('#FFFAF2')">米白</button>
+        <button class="preset-btn" onclick="setPresetColor('#222222')">酷黑</button>
+        <button class="preset-btn" onclick="setPresetColor('#E0F7FA')">淺藍</button>
+        <button class="preset-btn" onclick="setPresetColor('#FFF0F5')">柔粉</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-checkout" onclick="openPreviewModal()">🎁 保存圖片(保存後記得上傳)</button>
+      <a href="https://forms.gle/1bcfaixLEmddUhMk9" target="_blank" class="btn btn-form">✨ 上傳圖片給店家(記得先保存)</a>
+    </div>
+
+    <div class="tip-box">
+      <b>✂️ 操作說明：</b> 
+      <ul>
+        <li>點擊左側單個製作區或右側任一鍵帽格子可上傳照片，上傳後可自由拖曳、縮放或旋轉圖片。</li>
+        <li>製作完成記得上傳到表單呦，告知店員就會幫您製作了!</li>
+        <li>The創🌳台中市北區一中街173號。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 完成預覽視窗 -->
+  <div class="modal-overlay" id="previewModal" onclick="checkOutsideClose(event, 'previewModal')">
+    <div class="modal-content">
+      <h3>🎉 您的排版完成！</h3>
+      <p>請確認下方預覽圖，您可以切換下載「左側單個照片框」或「右側 2160×2160 高畫質整面排版」：</p>
+      
+      <div class="export-mode-tabs">
+        <button class="export-tab-btn active" id="tabSingle" onclick="switchExportMode('single')">📦 左側單個照片框</button>
+        <button class="export-tab-btn" id="tabFull" onclick="switchExportMode('full')">🖼️ 右側 2160×2160 整面</button>
+      </div>
+
+      <div class="preview-img-container">
+        <img id="modalPreviewImg" src="" alt="排版預覽圖">
+      </div>
+
+      <div class="modal-btn-row">
+        <button class="btn-modal-upload" onclick="confirmAndDownload()">確認並下載圖片</button>
+        <button class="btn-modal-close" onclick="closePreviewModal()">關閉視窗</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="globalFileInput" accept="image/*" style="display: none;">
+
+  <script>
+    const DESIGN_WIDTH = 1600;
+    const DESIGN_HEIGHT = 840;
+
+    const canvas = document.getElementById('diyCanvas');
+    const wrapper = document.getElementById('canvasWrapper');
+    const ctx = canvas.getContext('2d');
+    const globalFileInput = document.getElementById('globalFileInput');
+    const trashBtn = document.getElementById('trashBtn');
+
+    let selectedZoneIndex = -1;
+    let currentExportMode = 'single';
+
+    let baseZones = [];
+    (function initZones() {
+      const leftOuterX = 60;
+      const leftOuterY = 60;
+      const leftOuterSize = 720;
+      const singleBoxSize = 460;
+      
+      baseZones.push({
+        id: '單個製作區',
+        x: leftOuterX + (leftOuterSize - singleBoxSize) / 2,
+        top: leftOuterY + 160,
+        w: singleBoxSize,
+        h: singleBoxSize,
+        type: 'single',
+        labelMain: '單個製作',
+        labelSub: '上傳',
+        img: null,
+        bgColor: '#FFFFFF',
+        imgData: null,
+        imgSrcBlob: null,
+        currentBlobUrl: null
+      });
+
+      const rightStartX = 820;
+      const rightStartY = 60;
+      const rightSize = 720;
+      
+      const cols = 5;
+      const rows = 5;
+      const keycapSize = 105;
+      const totalGridW = cols * keycapSize;
+      const totalGridH = rows * keycapSize;
+      
+      const gapX = (rightSize - totalGridW) / (cols + 1);
+      const gapY = (rightSize - totalGridH) / (rows + 1);
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = rightStartX + gapX + c * (keycapSize + gapX);
+          const top = rightStartY + gapY + r * (keycapSize + gapY);
+          baseZones.push({
+            id: `鍵帽_${r+1}_${c+1}`,
+            x: x,
+            top: top,
+            w: keycapSize,
+            h: keycapSize,
+            type: 'keycap',
+            labelMain: `第 ${r+1} 排 ${c+1}`,
+            labelSub: '上傳',
+            img: null,
+            bgColor: '#FFFFFF',
+            imgData: null,
+            imgSrcBlob: null,
+            currentBlobUrl: null
+          });
+        }
+      }
+    })();
+
+    let undoStack = [];
+    let redoStack = [];
+    const MAX_HISTORY = 20;
+
+    function getCurrentStateSnapshot() {
+      return baseZones.map(z => ({
+        bgColor: z.bgColor,
+        imgSrcBlob: z.imgSrcBlob,
+        imgData: z.imgData ? { ...z.imgData } : null
+      }));
+    }
+
+    function saveState() {
+      undoStack.push(getCurrentStateSnapshot());
+      if (undoStack.length > MAX_HISTORY) undoStack.shift();
+      redoStack = []; 
+    }
+
+    function restoreState(state) {
+      state.forEach((savedZ, i) => {
+        baseZones[i].bgColor = savedZ.bgColor;
+        baseZones[i].imgSrcBlob = savedZ.imgSrcBlob;
+        baseZones[i].imgData = savedZ.imgData ? { ...savedZ.imgData } : null;
+
+        if (savedZ.imgSrcBlob) {
+          if (!baseZones[i].img || baseZones[i].currentBlobUrl !== savedZ.imgSrcBlob) {
+            const img = new Image();
+            img.onload = () => { render(); };
+            img.src = savedZ.imgSrcBlob;
+            baseZones[i].img = img;
+            baseZones[i].currentBlobUrl = savedZ.imgSrcBlob;
+          }
+        } else {
+          baseZones[i].img = null;
+          baseZones[i].currentBlobUrl = null;
+        }
+      });
+      render();
+    }
+
+    function undoAction() {
+      if (undoStack.length === 0) return;
+      redoStack.push(getCurrentStateSnapshot());
+      restoreState(undoStack.pop());
+    }
+
+    function redoAction() {
+      if (redoStack.length === 0) return;
+      undoStack.push(getCurrentStateSnapshot());
+      restoreState(undoStack.pop());
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        if (e.shiftKey) redoAction(); else undoAction();
+        e.preventDefault();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        redoAction();
+        e.preventDefault();
+      }
+    });
+
+    function initCanvasSize() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = DESIGN_WIDTH * dpr;
+      canvas.height = DESIGN_HEIGHT * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      render();
+    }
+
+    window.addEventListener('resize', initCanvasSize);
+
+    function changeSelectedZoneBgColor(color) {
+      if (selectedZoneIndex !== -1) {
+        saveState();
+        baseZones[selectedZoneIndex].bgColor = color;
+        render();
+      }
+    }
+
+    function setPresetColor(color) {
+      if (selectedZoneIndex !== -1) {
+        document.getElementById('zoneBgColorPicker').value = color;
+        changeSelectedZoneBgColor(color);
+      }
+    }
+
+    function updateColorPickerUI() {
+      const label = document.getElementById('colorBarLabel');
+      const picker = document.getElementById('zoneBgColorPicker');
+      if (selectedZoneIndex !== -1) {
+        const z = baseZones[selectedZoneIndex];
+        label.innerHTML = `🎨 設定【${z.id}】底色：`;
+        picker.value = z.bgColor;
+        picker.disabled = false;
+
+        if (z.img) {
+          trashBtn.disabled = false;
+        } else {
+          trashBtn.disabled = true;
+        }
+      } else {
+        label.innerHTML = `🎨 請先點選上方任一區域以設定底色：`;
+        picker.disabled = true;
+        trashBtn.disabled = true;
+      }
+    }
+
+    function drawCropMarks(targetCtx, x, y, w, h, scaleRatio = 1) {
+      targetCtx.save();
+      targetCtx.strokeStyle = '#D4C3B3';
+      targetCtx.lineWidth = 2 * scaleRatio;
+      const len = 12 * scaleRatio;
+      const offset = 4 * scaleRatio;
+
+      targetCtx.beginPath();
+      targetCtx.moveTo(x - offset - len, y);
+      targetCtx.lineTo(x - offset, y);
+      targetCtx.moveTo(x, y - offset - len);
+      targetCtx.lineTo(x, y - offset);
+      targetCtx.stroke();
+
+      targetCtx.beginPath();
+      targetCtx.moveTo(x + w + offset, y);
+      targetCtx.lineTo(x + w + offset + len, y);
+      targetCtx.moveTo(x + w, y - offset - len);
+      targetCtx.lineTo(x + w, y - offset);
+      targetCtx.stroke();
+
+      targetCtx.beginPath();
+      targetCtx.moveTo(x - offset - len, y + h);
+      targetCtx.lineTo(x - offset, y + h);
+      targetCtx.moveTo(x, y + h + offset);
+      targetCtx.lineTo(x, y + h + offset + len);
+      targetCtx.stroke();
+
+      targetCtx.beginPath();
+      targetCtx.moveTo(x + w + offset, y + h);
+      targetCtx.lineTo(x + w + offset + len, y + h);
+      targetCtx.moveTo(x + w, y + h + offset);
+      targetCtx.lineTo(x + w, y + h + offset + len);
+      targetCtx.stroke();
+
+      targetCtx.restore();
+    }
+
+    function render() {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      ctx.save();
+      ctx.clearRect(0, 0, DESIGN_WIDTH, DESIGN_HEIGHT);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, DESIGN_WIDTH, DESIGN_HEIGHT);
+
+      ctx.save();
+      ctx.strokeStyle = '#D4C3B3';
+      ctx.lineWidth = 2.5;
+
+      ctx.strokeRect(60, 60, 720, 720);
+      ctx.strokeRect(820, 60, 720, 720);
+
+      ctx.fillStyle = '#4a3b32';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText('如果是製作單個', 60 + 720/2, 100);
+      ctx.fillText('請使用這區塊~', 60 + 720/2, 135);
+      ctx.restore();
+
+      baseZones.forEach((z, idx) => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(z.x, z.top, z.w, z.h);
+        ctx.clip();
+
+        ctx.fillStyle = z.bgColor;
+        ctx.fill();
+
+        if (z.img && z.imgData) {
+          ctx.save();
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          const centerX = z.x + z.w/2 + (z.imgData.offsetX || 0);
+          const centerY = z.top + z.h/2 + (z.imgData.offsetY || 0);
+          
+          ctx.translate(centerX, centerY);
+          ctx.rotate((z.imgData.angle || 0) * Math.PI / 180);
+          ctx.scale(z.imgData.scale || 1, z.imgData.scale || 1);
+          
+          ctx.drawImage(z.img, -z.img.width/2, -z.img.height/2);
+          ctx.restore();
+        } else {
+          ctx.fillStyle = '#7C6A58';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.font = idx === 0 ? 'bold 20px sans-serif' : 'bold 13px sans-serif';
+          ctx.fillText('上傳', z.x + z.w/2, z.top + z.h/2);
+        }
+        ctx.restore();
+
+        ctx.save();
+        ctx.strokeStyle = idx === 0 ? '#B8A898' : '#D4C3B3';
+        ctx.lineWidth = idx === 0 ? 2.5 : 1;
+        ctx.beginPath();
+        ctx.rect(z.x, z.top, z.w, z.h);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      if (selectedZoneIndex !== -1) {
+        const z = baseZones[selectedZoneIndex];
+        if (z.img && z.imgData) {
+          drawTransformControls(z);
+        } else {
+          ctx.strokeStyle = '#1890ff';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.rect(z.x, z.top, z.w, z.h);
+          ctx.stroke();
+        }
+        updateColorPickerUI();
+      } else {
+        updateColorPickerUI();
+      }
+      ctx.restore();
+    }
+
+    function drawTransformControls(z) {
+      const targetImg = z.img;
+      const targetData = z.imgData;
+      if (!targetData) return;
+
+      const centerX = z.x + z.w/2 + targetData.offsetX;
+      const centerY = z.top + z.h/2 + targetData.offsetY;
+
+      const w = targetImg.width * targetData.scale;
+      const h = targetImg.height * targetData.scale;
+
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(targetData.angle * Math.PI / 180);
+
+      ctx.strokeStyle = '#1890ff';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(-w/2, -h/2, w, h);
+
+      ctx.beginPath();
+      ctx.moveTo(0, -h/2);
+      ctx.lineTo(0, -h/2 - 30);
+      ctx.strokeStyle = '#1890ff';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(0, -h/2 - 30, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#1890ff';
+      ctx.fill();
+
+      const handles = [{ x: -w/2, y: -h/2 }, { x: w/2, y: -h/2 }, { x: -w/2, y: h/2 }, { x: w/2, y: h/2 }];
+      handles.forEach(hCoord => {
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#1890ff';
+        ctx.lineWidth = 2;
+        ctx.fillRect(hCoord.x - 6, hCoord.y - 6, 12, 12);
+        ctx.strokeRect(hCoord.x - 6, hCoord.y - 6, 12, 12);
+      });
+      ctx.restore();
+    }
+
+    function getTransformedHandleCoords(z) {
+      const targetImg = z.img;
+      const targetData = z.imgData;
+
+      const centerX = z.x + z.w/2 + targetData.offsetX;
+      const centerY = z.top + z.h/2 + targetData.offsetY;
+
+      const w = targetImg.width * targetData.scale;
+      const h = targetImg.height * targetData.scale;
+      const rad = targetData.angle * Math.PI / 180;
+
+      const localHandles = [{ x: -w/2, y: -h/2 }, { x: w/2, y: -h/2 }, { x: -w/2, y: h/2 }, { x: w/2, y: h/2 }];
+      const globalHandles = localHandles.map(lh => ({
+        x: centerX + lh.x * Math.cos(rad) - lh.y * Math.sin(rad),
+        y: centerY + lh.x * Math.sin(rad) + lh.y * Math.cos(rad)
+      }));
+      const rotHandle = {
+        x: centerX - (-h/2 - 30) * Math.sin(rad),
+        y: centerY + (-h/2 - 30) * Math.cos(rad)
+      };
+      return { globalHandles, rotHandle };
+    }
+
+    let activeMode = null;
+    let startX = 0, startY = 0;
+    let initialDist = 0, initialScale = 1;
+
+    function getCanvasPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const rawX = (clientX - rect.left) * (DESIGN_WIDTH / rect.width);
+      const rawY = (clientY - rect.top) * (DESIGN_HEIGHT / rect.height);
+      return { x: rawX, y: rawY };
+    }
+
+    function getHitZone(x, y) {
+      for (let i = 0; i < baseZones.length; i++) {
+        const z = baseZones[i];
+        if (x >= z.x && x <= z.x + z.w && y >= z.top && y <= z.top + z.h) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    canvas.addEventListener('mousedown', handleCanvasInteraction);
+    canvas.addEventListener('touchstart', handleCanvasInteraction, { passive: false });
+
+    function handleCanvasInteraction(e) {
+      if (e.touches && e.touches.length >= 2) {
+        selectedZoneIndex = -1;
+        activeMode = null;
+        render();
+        return;
+      }
+
+      const { x, y } = getCanvasPos(e);
+      const hitThreshold = 30;
+
+      if (selectedZoneIndex !== -1) {
+        const z = baseZones[selectedZoneIndex];
+        if (z.img && z.imgData) {
+          const { globalHandles, rotHandle } = getTransformedHandleCoords(z);
+
+          if (Math.hypot(x - rotHandle.x, y - rotHandle.y) <= hitThreshold) {
+            saveState();
+            activeMode = 'rotate'; startX = x; startY = y;
+            if (e.cancelable) e.preventDefault();
+            return;
+          }
+
+          for (let handle of globalHandles) {
+            if (Math.hypot(x - handle.x, y - handle.y) <= hitThreshold) {
+              saveState();
+              activeMode = 'scale'; 
+              initialScale = z.imgData.scale;
+              
+              const centerX = z.x + z.w/2 + z.imgData.offsetX;
+              const centerY = z.top + z.h/2 + z.imgData.offsetY;
+              initialDist = Math.max(10, Math.hypot(x - centerX, y - centerY));
+              if (e.cancelable) e.preventDefault();
+              return;
+            }
+          }
+        }
+      }
+
+      const hitIndex = getHitZone(x, y);
+      if (hitIndex !== -1) {
+        selectedZoneIndex = hitIndex;
+        const clickedZone = baseZones[hitIndex];
+
+        if (!clickedZone.img) {
+          globalFileInput.value = '';
+          globalFileInput.click();
+        } else {
+          saveState();
+          activeMode = 'move'; startX = x; startY = y;
+          if (e.cancelable) e.preventDefault();
+        }
+      } else {
+        selectedZoneIndex = -1;
+        activeMode = null;
+      }
+      render();
+    }
+
+    globalFileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file || selectedZoneIndex === -1) return;
+
+      const blobUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = function() {
+        saveState();
+        const z = baseZones[selectedZoneIndex];
+        z.img = img;
+        z.imgSrcBlob = blobUrl;
+        z.currentBlobUrl = blobUrl;
+
+        const scaleX = z.w / img.width;
+        const scaleY = z.h / img.height;
+        const initialScaleVal = Math.max(scaleX, scaleY) * 1.1;
+
+        z.imgData = {
+          offsetX: 0,
+          offsetY: 0,
+          scale: initialScaleVal,
+          angle: 0
+        };
+        render();
+      };
+      img.src = blobUrl;
+    });
+
+    window.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('touchmove', handlePointerMove, { passive: false });
+
+    function handlePointerMove(e) {
+      if (e.touches && e.touches.length >= 2) return;
+      if (!activeMode || selectedZoneIndex === -1) return;
+      
+      if (e.cancelable) e.preventDefault();
+
+      const { x, y } = getCanvasPos(e);
+      const z = baseZones[selectedZoneIndex];
+      const dx = x - startX;
+      const dy = y - startY;
+
+      if (activeMode === 'move') {
+        z.imgData.offsetX += dx;
+        z.imgData.offsetY += dy;
+      } else if (activeMode === 'scale') {
+        const centerX = z.x + z.w/2 + z.imgData.offsetX;
+        const centerY = z.top + z.h/2 + z.imgData.offsetY;
+        const currentDist = Math.hypot(x - centerX, y - centerY);
+        if (initialDist > 0) {
+          const ratio = currentDist / initialDist;
+          z.imgData.scale = Math.max(0.05, initialScale * ratio);
+        }
+      } else if (activeMode === 'rotate') {
+        const centerX = z.x + z.w/2 + z.imgData.offsetX;
+        const centerY = z.top + z.h/2 + z.imgData.offsetY;
+        const rad = Math.atan2(y - centerY, x - centerX);
+        let rawAngle = rad * (180 / Math.PI) + 90;
+
+        const snapTargets = [0, 90, 180, 270, 360, -90, -180, -270];
+        const snapThreshold = 5;
+
+        let normalizedAngle = ((rawAngle % 360) + 360) % 360;
+        
+        let snapped = false;
+        for (let target of snapTargets) {
+          let normTarget = ((target % 360) + 360) % 360;
+          let diff = Math.abs(normalizedAngle - normTarget);
+          if (diff <= snapThreshold || diff >= 360 - snapThreshold) {
+            z.imgData.angle = target;
+            snapped = true;
+            break;
+          }
+        }
+
+        if (!snapped) {
+          z.imgData.angle = rawAngle;
+        }
+      }
+
+      startX = x;
+      startY = y;
+      render();
+    }
+
+    window.addEventListener('mouseup', endPointerInteraction);
+    window.addEventListener('touchend', endPointerInteraction);
+
+    function endPointerInteraction() {
+      activeMode = null;
+    }
+
+    function clearSelectedZone() {
+      if (selectedZoneIndex !== -1) {
+        saveState();
+        const z = baseZones[selectedZoneIndex];
+        z.img = null;
+        z.imgData = null;
+        z.imgSrcBlob = null;
+        z.currentBlobUrl = null;
+        trashBtn.disabled = true;
+        render();
+      }
+    }
+
+    function openPreviewModal() {
+      selectedZoneIndex = -1;
+
+      let hasLeftImg = baseZones[0].img !== null;
+      let hasRightImg = baseZones.slice(1).some(z => z.img !== null);
+
+      if (hasLeftImg && !hasRightImg) {
+        switchExportMode('single', false);
+      } else {
+        switchExportMode('full', false);
+      }
+
+      document.getElementById('previewModal').style.display = 'flex';
+      render();
+    }
+
+    function switchExportMode(mode, updatePreview = true) {
+      currentExportMode = mode;
+      document.getElementById('tabSingle').classList.toggle('active', mode === 'single');
+      document.getElementById('tabFull').classList.toggle('active', mode === 'full');
+
+      if (updatePreview) {
+        updateModalPreviewImage();
+      }
+    }
+
+    function updateModalPreviewImage() {
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.imageSmoothingEnabled = true;
+      tempCtx.imageSmoothingQuality = 'high';
+
+      if (currentExportMode === 'single') {
+        const z = baseZones[0];
+        tempCanvas.width = z.w;
+        tempCanvas.height = z.h;
+
+        tempCtx.fillStyle = z.bgColor;
+        tempCtx.fillRect(0, 0, z.w, z.h);
+
+        if (z.img && z.imgData) {
+          tempCtx.save();
+          tempCtx.imageSmoothingEnabled = true;
+          tempCtx.imageSmoothingQuality = 'high';
+          const centerX = z.w / 2 + z.imgData.offsetX;
+          const centerY = z.h / 2 + z.imgData.offsetY;
+          
+          tempCtx.translate(centerX, centerY);
+          tempCtx.rotate(z.imgData.angle * Math.PI / 180);
+          tempCtx.scale(z.imgData.scale, z.imgData.scale);
+          
+          tempCtx.drawImage(z.img, -z.img.width/2, -z.img.height/2);
+          tempCtx.restore();
+        } else {
+          tempCtx.fillStyle = '#7C6A58';
+          tempCtx.textAlign = 'center';
+          tempCtx.textBaseline = 'middle';
+          tempCtx.font = 'bold 20px sans-serif';
+          tempCtx.fillText('上傳', z.w / 2, z.h / 2);
+        }
+
+        tempCtx.save();
+        tempCtx.strokeStyle = '#B8A898';
+        tempCtx.lineWidth = 3;
+        tempCtx.strokeRect(0, 0, z.w, z.h);
+        tempCtx.restore();
+
+      } else {
+        // 設定為最高畫質 2160 * 2160 px (相對於原尺寸 720 放大 3 倍)
+        const EXPORT_SIZE = 2160;
+        const scaleRatio = EXPORT_SIZE / 720; // 3
+        const startX = 820;
+        const startY = 60;
+
+        tempCanvas.width = EXPORT_SIZE;
+        tempCanvas.height = EXPORT_SIZE;
+
+        tempCtx.fillStyle = '#FFFFFF';
+        tempCtx.fillRect(0, 0, EXPORT_SIZE, EXPORT_SIZE);
+
+        baseZones.slice(1).forEach(z => {
+          if (!z.img) return; // 如果沒有照片，直接跳過不畫格子與背景
+
+          tempCtx.save();
+          const drawX = (z.x - startX) * scaleRatio;
+          const drawY = (z.top - startY) * scaleRatio;
+          const drawW = z.w * scaleRatio;
+          const drawH = z.h * scaleRatio;
+
+          tempCtx.beginPath();
+          tempCtx.rect(drawX, drawY, drawW, drawH);
+          tempCtx.clip();
+
+          tempCtx.fillStyle = z.bgColor;
+          tempCtx.fill();
+
+          if (z.img && z.imgData) {
+            tempCtx.save();
+            tempCtx.imageSmoothingEnabled = true;
+            tempCtx.imageSmoothingQuality = 'high';
+            
+            const centerX = drawX + drawW/2 + (z.imgData.offsetX * scaleRatio);
+            const centerY = drawY + drawH/2 + (z.imgData.offsetY * scaleRatio);
+            
+            tempCtx.translate(centerX, centerY);
+            tempCtx.rotate(z.imgData.angle * Math.PI / 180);
+            tempCtx.scale(z.imgData.scale * scaleRatio, z.imgData.scale * scaleRatio);
+            
+            tempCtx.drawImage(z.img, -z.img.width/2, -z.img.height/2);
+            tempCtx.restore();
+          }
+          tempCtx.restore();
+
+          drawCropMarks(tempCtx, drawX, drawY, drawW, drawH, scaleRatio);
+        });
+      }
+
+      document.getElementById('modalPreviewImg').src = tempCanvas.toDataURL('image/jpeg', 0.98);
+    }
+
+    function closePreviewModal() {
+      document.getElementById('previewModal').style.display = 'none';
+    }
+
+    function checkOutsideClose(e, modalId) {
+      if (e.target.id === modalId) {
+        document.getElementById(modalId).style.display = 'none';
+      }
+    }
+
+    function confirmAndDownload() {
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.imageSmoothingEnabled = true;
+      tempCtx.imageSmoothingQuality = 'high';
+
+      if (currentExportMode === 'single') {
+        const z = baseZones[0];
+        tempCanvas.width = z.w;
+        tempCanvas.height = z.h;
+
+        tempCtx.fillStyle = z.bgColor;
+        tempCtx.fillRect(0, 0, z.w, z.h);
+
+        if (z.img && z.imgData) {
+          tempCtx.save();
+          tempCtx.imageSmoothingEnabled = true;
+          tempCtx.imageSmoothingQuality = 'high';
+          const centerX = z.w / 2 + z.imgData.offsetX;
+          const centerY = z.h / 2 + z.imgData.offsetY;
+          
+          tempCtx.translate(centerX, centerY);
+          tempCtx.rotate(z.imgData.angle * Math.PI / 180);
+          tempCtx.scale(z.imgData.scale, z.imgData.scale);
+          
+          tempCtx.drawImage(z.img, -z.img.width/2, -z.img.height/2);
+          tempCtx.restore();
+        } else {
+          tempCtx.fillStyle = '#7C6A58';
+          tempCtx.textAlign = 'center';
+          tempCtx.textBaseline = 'middle';
+          tempCtx.font = 'bold 20px sans-serif';
+          tempCtx.fillText('上傳', z.w / 2, z.h / 2);
+        }
+
+        tempCtx.save();
+        tempCtx.strokeStyle = '#B8A898';
+        tempCtx.lineWidth = 3;
+        tempCtx.strokeRect(0, 0, z.w, z.h);
+        tempCtx.restore();
+
+      } else {
+        const EXPORT_SIZE = 2160;
+        const scaleRatio = EXPORT_SIZE / 720;
+        const startX = 820;
+        const startY = 60;
+
+        tempCanvas.width = EXPORT_SIZE;
+        tempCanvas.height = EXPORT_SIZE;
+
+        tempCtx.fillStyle = '#FFFFFF';
+        tempCtx.fillRect(0, 0, EXPORT_SIZE, EXPORT_SIZE);
+
+        baseZones.slice(1).forEach(z => {
+          if (!z.img) return; // 如果沒有照片，直接跳過不畫格子與背景
+
+          tempCtx.save();
+          const drawX = (z.x - startX) * scaleRatio;
+          const drawY = (z.top - startY) * scaleRatio;
+          const drawW = z.w * scaleRatio;
+          const drawH = z.h * scaleRatio;
+
+          tempCtx.beginPath();
+          tempCtx.rect(drawX, drawY, drawW, drawH);
+          tempCtx.clip();
+
+          tempCtx.fillStyle = z.bgColor;
+          tempCtx.fill();
+
+          if (z.img && z.imgData) {
+            tempCtx.save();
+            tempCtx.imageSmoothingEnabled = true;
+            tempCtx.imageSmoothingQuality = 'high';
+            
+            const centerX = drawX + drawW/2 + (z.imgData.offsetX * scaleRatio);
+            const centerY = drawY + drawH/2 + (z.imgData.offsetY * scaleRatio);
+            
+            tempCtx.translate(centerX, centerY);
+            tempCtx.rotate(z.imgData.angle * Math.PI / 180);
+            tempCtx.scale(z.imgData.scale * scaleRatio, z.imgData.scale * scaleRatio);
+            
+            tempCtx.drawImage(z.img, -z.img.width/2, -z.img.height/2);
+            tempCtx.restore();
+          }
+          tempCtx.restore();
+
+          drawCropMarks(tempCtx, drawX, drawY, drawW, drawH, scaleRatio);
+        });
+      }
+
+      tempCanvas.toBlob(function(blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = currentExportMode === 'single' ? '左側單個照片框.jpg' : '右側2160x2160高畫質整面排版.jpg';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        closePreviewModal();
+      }, 'image/jpeg', 0.98);
+    }
+
+    const originalOpenPreviewModal = openPreviewModal;
+    openPreviewModal = function() {
+      originalOpenPreviewModal();
+      updateModalPreviewImage();
+    };
+
+    window.onload = function() {
+      initCanvasSize();
+    };
+  </script>
+</body>
+</html>
